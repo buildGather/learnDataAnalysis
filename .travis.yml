@@ -1,16 +1,18 @@
 language: python
-cache: pip
-
 python:
-    - "2.7"
-
-# install jupyter and get reveal.js as we will need it to build the website
-# from Travis
+    - "3.6-dev"
+    - 3.5
+    - 3.4
 install:
-    - pip install jupyter
-    - wget https://github.com/hakimel/reveal.js/archive/master.zip
-    - unzip master.zip
-    - mv reveal.js-master reveal.js
-
+    - pip install pytest pytest-cov --upgrade
+    - pip install codecov --upgrade
+    - pip install pylint --upgrade
+    - pip install -e .
 script:
-    - jupyter nbconvert nb.ipynb --to slides --reveal-prefix=reveal.js
+    - py.test --cov=./
+    - pylint ipynb
+after_success:
+    - codecov
+matrix:
+    allow_failures:
+        - python: 3.6-dev
